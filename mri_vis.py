@@ -15,31 +15,26 @@ def display_slice_comparison(image1, image2, file_path, view):
     plt.suptitle(file_path)
     plt.show()
 
-def get_slice(image3d, view, slice_ind=None):
+def get_slice(image3d, dim, slice_ind=None):
     # Display slice for visual assistance
-    view_dict = {
-        'coronal': 0,
-        'transverse': 1,
-        'sagittal': 2
-    }
 
     if slice_ind is None:
-        n = image3d.shape[view_dict[view]]
-        slice_ind = int((n - 1) / 2)
+        n_slices = image3d.shape[dim]
+        slice_ind = int((n_slices - 1) / 2)
 
-    if view is 'coronal':
+    if dim == 0:
         im_slice = image3d[slice_ind, :, :]
-    elif view is 'transverse':
+    elif dim == 1:
         im_slice = image3d[:, slice_ind, :]
-    elif view is 'sagittal':
-        im_slice = np.transpose(image3d[:, :, slice_ind])
+    elif dim == 2:
+        im_slice = image3d[:, :, slice_ind]
 
-    return im_slice
+    return im_slice, slice_ind
 
 class IndexTracker(object):
-    def __init__(self, ax, X, view):
+    def __init__(self, ax, X, view, title):
         self.ax = ax
-        ax.set_title('Use scroll wheel to navigate images')
+        ax.set_title(title)
         
 
         self.X = X
@@ -62,8 +57,8 @@ class IndexTracker(object):
         self.ax.set_ylabel('slice %s' % self.ind)
         self.im.axes.figure.canvas.draw()
 
-def display_slices(image3d, view):
+def display_slices(image3d, view, title):
     fig, ax = plt.subplots(1, 1)
-    tracker = IndexTracker(ax, image3d, view)
+    tracker = IndexTracker(ax, image3d, view, title)
     fig.canvas.mpl_connect('scroll_event', tracker.onscroll)
     plt.show()
