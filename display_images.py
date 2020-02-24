@@ -36,12 +36,24 @@ def display3dImages(imageList, mode='None'):
         xMesh,yMesh = np.meshgrid(xCoords,yCoords)
         
         ax = fig.add_subplot(1,len(imageList),count+1,projection='3d')
-        if mode is 'scatter':
+        if mode == 'scatter':
             ax.scatter(xMesh, yMesh, image)
-        elif mode is 'surface':
+        elif mode == 'surface':
             ax.plot_surface(xMesh, yMesh, image, cmap='plasma')
 
         else:
             print("ERROR: Specify 3D image mode")
         
     plt.show()
+
+def overlay_images(imageList, fig, ax):
+    """Overlays segmentations on a base image."""
+    for index, image in enumerate(imageList):
+        if index == 0:
+            # Base image
+            ax.imshow(image, cmap='gray')
+        else:
+            # Overlay all others onto the base image
+            ax.imshow(image, cmap='jet', alpha=0.9)
+    
+    return fig, ax
