@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def display_slice_comparison(image1, image2, file_path, view):
-    slice1 = get_slice(image1, view)
-    slice2 = get_slice(image2, view)
+    slice1, ind1 = get_slice(image1, view)
+    slice2, ind2 = get_slice(image2, view)
 
     plt.subplot(1, 2, 1)
     plt.imshow(slice1, cmap="gray", aspect='auto') #, aspect=0.15
@@ -42,7 +42,7 @@ class IndexTracker(object):
         rows, cols, self.slices = X.shape
         self.ind = self.slices//2
 
-        self.im = ax.imshow(get_slice(self.X, self.view, self.ind))
+        self.im = ax.imshow(get_slice(self.X, self.view, self.ind)[0])
         self.update()
 
     def onscroll(self, event):
@@ -53,7 +53,7 @@ class IndexTracker(object):
         self.update()
 
     def update(self):
-        self.im.set_data(get_slice(self.X, self.view, self.ind))
+        self.im.set_data(get_slice(self.X, self.view, self.ind)[0])
         self.ax.set_ylabel('slice %s' % self.ind)
         self.im.axes.figure.canvas.draw()
 
